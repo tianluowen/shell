@@ -1,35 +1,59 @@
-# !/bin/bash
+#!/bin/bash
 
 # 配置文件名 与 函数名
-logfilename="log"
-configfilename="gitconfig.ini"
+logfilename="./log"
+configfilename="./gitconfig.ini"
+
 
 # test 多字符串匹配
-# message="testFATLidjfdiconfliticCONFLITICk"
-# if [[ ${message} =~ "ERROR" ]] || [[ ${message} =~ "FATAL" ]] || [[ ${message} =~ "CONFLITIC" ]]; then  
-#     echo ${message}
-#     # 发送邮件                                                                                                                                                          
-#     # 设置该仓库为FALUSE                                                                                                                                                
-# fi       
+function testmangstr() {
+    # message="testFATLidjfdiconfliticCONFLITICk"
+    if [[ ${message} =~ "ERROR" ]] || [[ ${message} =~ "FATAL" ]] || [[ ${message} =~ "CONFLITIC" ]]; then  
+        echo ${message}
+        # 发送邮件                                                                                                                                                          
+        # 设置该仓库为FALUSE                                                                                                                                                
+    fi       
+}
 
 
 # test 文件字符匹配
-# message="test abc
-# def kfsfksslgjg"
-# if [[ "${message}" =~ "abc" ]];
-# then
-#     echo 111111
-# fi
+function teststr() {
+    message="test abc
+    def kfsfksslgjg"
+    if [[ "${message}" =~ "abc" ]];
+    then
+        echo 111111
+    fi
+}
 
 
-# test 删除两个空行之间的文本内容
 # 日志处理，只保存10天日志
-# 进入日志所在目录 获取10天前的日期 删除开始到该日期的所有日志
-# cd ${SHELLDIR}
-# date=`date -d "-10 days" +%Y-%m-%d`
-# delline=`sed -n  "/${date}/=" ./git.log | head -1`
-# delline=`expr ${delline} - 1 > /dev/null 2>&1`
-# sed -i "1,${delline}d" ./git.log > /dev/null 2>&1  # 不处理错误信息
+# managelog ${logfilename}
+function managelog() {
+    # 进入日志所在目录 获取10天前的日期 删除开始到该日期的所有日志
+    cd ${SHELLDIR}
+    date=`date -d "-10 days" +%Y-%m-%d`
+    delline=`sed -n  "/${date}/=" $1 | head -1`
+    delline=`expr ${delline} - 1 > /dev/null 2>&1`
+    sed -i "1,${delline}d" $1 > /dev/null 2>&1  # 不处理错误信息
+}
+
+
+# 删除文件中最后一个空白行
+# 删除 gitpull 时候日志添加的空行，显得日志整齐，每一次操作日志被空行分隔开，也方便查看
+# deltailspaceline ${logfilename}
+function deltailspaceline() {
+    delteline=sed -n '/[a-zA-Z0-9@#$%^&*]/!=' $1 | tail -1 &&
+    sed "${delteline},+1d"
+}
+
+
+# 把配置文件中的 FAULSE 全部修改为 TRUE
+# changfulsetotrue ${configfilename}
+function changfulsetotrue() {
+    sed -i "s/FAULSE/TRUE/g" ./gitconfig.ini
+    # sed -i "s/FAULSE/TRUE/g" $1 
+}
 
 
 # 判断日志文件，如果大于1000line 删除第一个空行行到第二个空行之间的内容

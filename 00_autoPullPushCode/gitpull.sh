@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 获取执行脚本的绝对路径 保证日志输出在正确的位置
+# SHELLDIR="/home/tianlw/shell/gitshell"
 SHELLDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SHELLDIR="/home/tianlw/shell/gitshell"
 cd ${SHELLDIR}
 
 # 定义配置文件 与 日志文件名
@@ -36,7 +36,7 @@ do
         # 进入目录 && git Pull
         cd ${GITPATH} && 
         message=`git pull ${ORIGIN} ${MASTER} 2>&1` &&
-        sleep 5
+        # sleep 5
         cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
 
         # 如果存在冲突或者错误终止，将信息发送邮件 同时将 ${configfilename} 文件中的相应仓库设置为faluse,暂停该仓库的操作
@@ -47,7 +47,7 @@ do
             # 设置该仓库为FALUSE
             sed -i "/^${REPOSITORIES}\>/s/TRUE/FAULSE/g" ${configfilename}
         fi 
-        sleep 5;
+        # sleep 5;
     fi
 done
 echo "git pull done" >> ${logfilename}

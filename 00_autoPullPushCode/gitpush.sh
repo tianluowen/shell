@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 获取执行脚本的绝对路径 保证日志输出在正确的位置
+# SHELLDIR="/home/tianlw/shell/gitshell"
 SHELLDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SHELLDIR="/home/tianlw/shell/gitshell"
 cd ${SHELLDIR}
 
 # 定义配置文件 与 日志文件名
@@ -36,7 +36,7 @@ do
         # 进入目录 git status
         cd ${GITPATH} &&
         message=`git status 2>&1` &&
-        sleep 5 
+        # sleep 5 
         cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
 
         # 判断 输出信息中是否有 git add
@@ -44,7 +44,7 @@ do
         then
             cd ${GITPATH} &&
             message=`git add . 2>&1` &&
-            sleep 5 
+            # sleep 5 
             cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
         fi 
     fi
@@ -75,7 +75,7 @@ do
         # 进入目录 git Pull
         cd ${GITPATH} &&
         message=`git status 2>&1` &&
-        sleep 5
+        # sleep 5
         cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
 
         # 判断 输出信息存在 git reset HEAD 则需要提交
@@ -86,7 +86,7 @@ do
             then
                 cd ${GITPATH} &&
                 message=`git commit --amend --no-edit 2>&1` &&
-                sleep 5
+                # sleep 5
                 cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
             else  # 还没有提交过
                 date=`date '+%Y-%m-%d'`
@@ -94,7 +94,7 @@ do
                 echo ${desc}  >> ${logfilename}
                 cd ${GITPATH} &&
                 message=`git commit -m "${desc}" 2>&1` &&
-                sleep 5
+                # sleep 5
                 cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
             fi 
         fi 
@@ -126,18 +126,18 @@ do
         # 进入目录 && git Pull
         cd ${GITPATH} && 
         message=`git pull ${ORIGIN} ${MASTER} 2>&1` &&
-        sleep 5
+        # sleep 5
         cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
 
         # 如果存在冲突或者错误终止，将信息发送邮件 同时将 ${configfilename} 文件中的相应仓库设置为faluse,暂停该仓库的操作
-        if [[ ${message} =~ "ERROR" ]] || [[ ${message} =~ "FATAL" ]] || [[ ${message} =~ "CONFLICT" ]]
+        if [[ ${message} =~ "error" ]] || [[ ${message} =~ "fatal" ]] || [[ ${message} =~ "conflict" ]]
         then
             # 发送邮件 mail ＋参数可以直接发送邮箱
             echo "${message}" | mail -s "git pull conflit ${datetime}" 1308145492@qq.com &&
             # 设置该仓库为FALUSE
             sed -i "/^${REPOSITORIES}\>/s/TRUE/FAULSE/g" ${configfilename}
         fi 
-        sleep 5;
+        # sleep 5;
     fi
 done
 echo "git pull done" >> ${logfilename}
@@ -166,7 +166,7 @@ do
         # 进入 git 目录
         cd ${GITPATH} &&
         message=`git status 2>&1` &&
-        sleep 5
+        # sleep 5
         cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
 
         # 判断 输出信息中是否有 git push
@@ -175,32 +175,29 @@ do
             # git rebase
             cd ${GITPATH} &&
             message=`git rebase 2>&1` &&
-            sleep 5 
+            # sleep 5 
             cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
 
             # git push
             cd ${GITPATH} &&
-            # message=`git push ${ORIGIN} ${MASTER} 2>&1` &&
-            echo "git push origin master"
-            sleep 20
+            message=`git push ${ORIGIN} ${MASTER} 2>&1` &&
+            # sleep 20
             cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
         fi 
 
         # 如果存在冲突或者错误终止，将信息发送邮件 同时将 ${configfilename} 文件中的相应仓库设置为faluse,暂停该仓库的操作
-        if [[ ${message} =~ "ERROR" ]] || [[ ${message} =~ "FATAL" ]] || [[ ${message} =~ "CONFLICT" ]] 
+        if [[ ${message} =~ "error" ]] || [[ ${message} =~ "fatal" ]] || [[ ${message} =~ "conflict" ]] 
         then
             # 发送邮件 mail ＋参数可以直接发送邮箱
             echo "${message}" | mail -s "git pull conflit ${datetime}" 1308145492@qq.com &&
             # 设置该仓库为FALUSE
             sed -i "/^${REPOSITORIES}\>/s/TRUE/FAULSE/g" ${configfilename}
         fi 
-        sleep 5;
+        # sleep 5;
     fi
 done
 echo "git push done" >> ${logfilename}
-
 echo "auto push done, all is well" >> ${logfilename}
 
-echo "${message}" | mail -s "git pull success ${datetime}" 1308145492@qq.com &&
 
 exit 0

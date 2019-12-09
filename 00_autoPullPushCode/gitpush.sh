@@ -84,8 +84,12 @@ do
             # 输出信息中存在 git push 则已经存在了 commitid 
             if [[ ${message} =~ "git push" ]]
             then
+                date=`date '+%Y-%m-%d'`
+                desc="${date} update add"
+                echo ${desc}  >> ${logfilename}
                 cd ${GITPATH} &&
-                message=`git commit --amend --no-edit 2>&1` &&
+                # message=`git commit --amend --no-edit 2>&1` &&
+                message=`git commit -m "${desc}" 2>&1` &&
                 # sleep 5
                 cd ${SHELLDIR} && echo "${message}" >> ${logfilename}
             else  # 还没有提交过

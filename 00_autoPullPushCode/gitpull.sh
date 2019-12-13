@@ -52,13 +52,25 @@ do
 done
 echo "git pull done" >> ${logfilename}
 
+
 # 日志处理，只保存10天日志
 # 进入日志所在目录 获取10天前的日期 删除开始到该日期的所有日志
 cd ${SHELLDIR}
 dateclear=`date -d "-10 days" +%Y-%m-%d`
 delline=`sed -n  "/${dateclear}/=" ${logfilename}| head -1`
-delline=`expr ${delline} - 1 > /dev/null 2>&1`
-sed -i "1,${delline}d" ${logfilename} > /dev/null 2>&1  # 不处理错误信息
+
+# 如果 delline 为空
+if [[ $delline ]] && [[ $delline != "1" ]]
+then
+    delline=`expr ${delline} - 1` > /dev/null 2>&1
+    echo ${delline}
+    sed -i "1,${delline}d" ${logfilename} >> ${logfilename} 2>&1  # 处理结果存入
+    if [ $? -eq 0 ]; then
+        echo "清理日志成功" >> ${logfilename}
+    else
+        echo "清理日志失败" >> ${logfilename}
+    fi
+fi
 
 echo "auto pull done, all is well" >> ${logfilename}
 

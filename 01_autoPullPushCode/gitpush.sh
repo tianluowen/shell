@@ -3,7 +3,10 @@
 # 获取执行脚本的绝对路径 保证日志输出在正确的位置
 # SHELLDIR="/home/tianlw/shell/gitshell"
 SHELLDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# dir=`pwd`
 cd ${SHELLDIR}
+# echo $SHELLDIR
+# echo $dir
 
 # 定义配置文件 与 日志文件名
 configfilename="./gitconfig.ini"

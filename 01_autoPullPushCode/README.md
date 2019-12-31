@@ -17,8 +17,48 @@
     
 
 2. crontab 定时 pull push
+ - `crontab -e` 打开定时任务
+ 
+ <br />
+ ```
+ # 每天早上定时更新 自己的代码仓库
+ 01 6 * * * /home/tianlw/gitee/shell/01_autoPullPushCode/gitpull.sh &>> /dev/null
+ # 每天晚上 10 点更新自己的代码
+ 15 22 * * * /home/tianlw/gitee/shell/01_autoPullPushCode/gitpush.sh &>> /dev/null
+ # 每周五晚上自动关机
+ 30 22 * * 5 sudo /sbin/shutdown now
+ ```
 
 3. systemctl 开关机自动运行服务
+ - `cd /etc/systemctl/user/`
+ - `vim my.service`
+ - 输入以下内容
+
+ ```shell
+ [Unit]                                                                                         
+ Description=auto-git                                                                           
+ #Before=network.target sshd-keygen.service                                                     
+ #After=network.target                                                                          
+
+ [Service]                                                                                      
+ ExecStart=-/usr/bin/sudo su - tianlw -s /home/tianlw/gitee/shell/01_autoPullPushCode/gitpull.sh
+ #ExecStart=-/usr/bin/sudo su - tianlw -s /home/tianlw/shell/gitshell/bootuserin.sh             
+ ExecStop=-/usr/bin/sudo su - tianlw -s /home/tianlw/gitee/shell/01_autoPullPushCode/gitpush.sh 
+ #ExecStart=/home/tianlw/shell/gitshell/gitpull.sh                                              
+ #ExecStop=/home/tianlw/shell/gitshell/gitpush.sh                                               
+ #Type=forking                                                                                  
+ #Type=oneshot                                                                                  
+ Type=simple                                                                                    
+ RemainAfterExit=yes                                                                            
+ #User=tianlw                                                                                   
+ #Group=dialout                                                                                 
+ #TimeoutStopSec=300                                                                            
+ #ExecStart=/usr/bin/sudo /bin/su - tianlw -s /home/tianlw/gitpull.sh                           
+ #ExecStop=/usr/bin/sudo /bin/su - tianlw -s /home/tianlw/gitpush.sh                            
+
+ [Install]                                                                                      
+ WantedBy=default.target                                                                        
+ ```
 
 
 ### 02 code 地址修改变更情况
